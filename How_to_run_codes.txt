@@ -1,0 +1,55 @@
+
+The following manual is meant to provide information on how to run the matlab codes used to extract the model results and to plot 
+figures related to the manuscript 'Production and preservation of low-relief surfaces in mountainous landscapes by Pliocene-Quaternary glaciations"
+by M. Bernard, P.A. van der Beek, V.K. Pedersen, and C. Colleps.
+
+Author: Maxime Bernard.
+
+----------------------------------------------------------------------------------------------------
+
+------------------------------
+Compile and run iSOSIA models:
+------------------------------
+
+iSOSIA works with two main folders:
+
+mfiles: contains all the Matlab files that enables (i) to create input files for iSOSIA, and (ii) to show results ('show' function).
+source: contains all the source files (i.e. the core of iSOSIA).
+
+To run an iSOSIA model, the files in the 'source' folder need to be compiled first. This is done by the command file 'gmake' in the source folder.
+To run such a command you need the gcc compiler. Within a command prompt, go to '.\spm-3.4.7c\source' and write '.\gmake', then iSOSIA will compile.
+
+Once iSOSIA is compiled, you can create input files for an iSOSIA model. This is done with Matlab. For simplicity, add the 'mfiles' folder to the Matlab search path. You can do this by the following set of commands:
+
+- Within the Matlab interface, go to 'HOME', then click on 'Set Path'. A new interface should pop-up.
+- Click on 'Add Folder...', and go to the location of the 'mfiles' folder in your disk. 
+- Select the folder and click on 'Select a folder'
+- Now, the 'mfiles' folder should appears in the list of folders within the 'Set Path' interface of Matlab.
+- In the bottom-right of this panel, click on 'Save' to save the path.
+- Close the panel.
+
+Now you are able to call the Matlab functions in 'mfiles' to create input files for iSOSIA.
+
+--------------------- Input files for iSOSIA -------------------
+
+The setting of input files is done with the function 'template.m' within the model folder provided. Go to the model folder and open the 'template.m' file.
+You can see inside, all the parameters that can be set to run an iSOSIA model. Comments are provided to define the parameters.
+
+To write the input files (i.e. in the 'input' folder), corresponding to the set of parameters values, simply call the 'template' function in the Matlab command prompt.
+This will generate two figures, the model topography and the defined initial mass balance, and the input files.
+
+
+---------------------------------------
+Extract model results and plot figures:
+---------------------------------------
+
+
+The codes to extract model results and plot the figures are gathered in the 'Codes' directory. 
+
+The model results used to plot the figures are provided in the repository. Please, do not remove them. 
+If you need to extract the model results into the '.mat' files, you will need to run the models first (see below). To extract and save model results,
+open and run the codes 'Extract_model_results_part1.m' and 'Extract_model_results_part2.m'. The model results will be saved into
+'.mat' files in the 'Model_analyses' directory.
+
+To plot the figures, open and run the codes 'plot_figures_part1.m', 'plot_figures_part2.m', and 'plot_figures_part3.m' respectively.
+The figures will be saved in vector format in the 'Figures' directory.
