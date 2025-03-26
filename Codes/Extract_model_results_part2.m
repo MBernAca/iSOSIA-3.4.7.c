@@ -42,8 +42,8 @@ fclose(fid);
 Bed_slope_threshold = 0.177; % [gradient]
 Relief_threshold = 200;
 curvature_threshold_for_cirques = 0.001;
-abrasion_threshold_for_cirques = 5;
-Relief_threshold_for_cirques = 500;
+abrasion_threshold_for_cirques = 0;
+Relief_threshold_for_cirques = 200;
 minimum_elevation = -1000;
 maximum_elevation = 2000;
 number_of_elevation_bin = 50;
@@ -275,7 +275,7 @@ save([path_to_save_analyses,'Erosion_timeSeries_part2.mat'],'Mean_erosion_rate_e
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%% LRS Preservation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% ELRS Preservation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialize arrays
@@ -318,11 +318,11 @@ for i = 1:number_of_Models
 	        % Found slopes < 10° for the bin elevation
 	        slope_found = slopes(index);
 	        relief_found = relief(index);
-            % LRS are surfaces with bed slope < 10°, with local relief <
+            % ELRS are surfaces with bed slope < 10°, with local relief <
             % 200 m and wich elevation is > than local mean topography
             % (filter valley floor)
 	        index_slope = find(slope_found < 0.177 & relief_found< Relief_threshold & bedTrue(index) > Meanbed(index));
-	        Area_dist(j) = length(index_slope) * cell_area * 1e-6; % LRS area in km2
+	        Area_dist(j) = length(index_slope) * cell_area * 1e-6; % ELRS area in km2
             if t==85
                 LRS_area_distribution_stage1(i,j) = length(index_slope)*dx*dy*1e-6;
             end

@@ -42,8 +42,8 @@ fclose(fid);
 Bed_slope_threshold = 0.177; % [gradient]
 Relief_threshold = 200;
 curvature_threshold_for_cirques = 0.001;
-abrasion_threshold_for_cirques = 5;
-Relief_threshold_for_cirques = 500;
+abrasion_threshold_for_cirques = 0;
+Relief_threshold_for_cirques = 200;
 minimum_elevation = -1000;
 maximum_elevation = 2000;
 number_of_elevation_bin = 50;
@@ -93,7 +93,7 @@ for i=1:length(elevation_bins)
 	slope_found = Initial_bed_slope(index);
 	relief_found = Initial_relief(index);
 	index_LRS = find(slope_found < Bed_slope_threshold & relief_found < Relief_threshold & Initial_bed(index) > Initial_Mean_DEM(index));
-	Initial_LRS_area_per_elevation_bin(i) = length(index_LRS) * cell_area * 1e-6; % Area of LRS (km²)
+	Initial_LRS_area_per_elevation_bin(i) = length(index_LRS) * cell_area * 1e-6; % Area of ELRS (km²)
 	Initial_hypsometry_area_per_elevation_bin(i) = length(index) * cell_area * 1e-6; % Area of surfaces (km²)
 end
 
@@ -277,7 +277,7 @@ save([path_to_save_analyses,'Erosion_timeSeries_part1.mat'],'Mean_erosion_rate_e
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LRS area %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ELRS area %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialize arrays

@@ -36,8 +36,8 @@ fclose(fid);
 Bed_slope_threshold = 0.177; % [gradient]
 Relief_threshold = 200;
 curvature_threshold_for_cirques = 0.001;
-abrasion_threshold_for_cirques = 5;
-Relief_threshold_for_cirques = 500;
+abrasion_threshold_for_cirques = 0;
+Relief_threshold_for_cirques = 200;
 minimum_elevation = -1000;
 maximum_elevation = 2000;
 number_of_elevation_bin = 50;
@@ -65,7 +65,7 @@ load([path_to_save_analyses, 'reference_model_results.mat'])
 %-------------------------- Section 3.1. ----------------------------------
 %--------------------------------------------------------------------------
 
-%% Figure 2. Formation of low-relief surfaces.
+%% Figure 3. Formation of elevated low-relief surfaces.
 
 Models_to_plot = [1, 2, 3, 4];
 kg = [5e-4, 8e-5, 1e-5, 1e-5];
@@ -75,7 +75,7 @@ size_font = 10;
 figure
 set(gcf,'units','normalized','outerposition',[0 0 1 1])
 cmap = colormap('cool');
-% KG vs LRS area
+% KG vs ELRS area
 subplot(2,2,1)
 hold on, grid on, box on
 scatter(kg(1:2),Total_LRS_area(Models_to_plot(1:2)),100,Total_LRS_area(Models_to_plot(1:2)),'o','fill'),cb = colorbar;
@@ -161,7 +161,7 @@ set(gca,'fontname','arial','fontsize',10)
 print([path_to_figures,'Figure2_mainText'],'-dsvg','-vector')
 
 
-%% Figure 3. Formation and preservation of low-relief surfaces.
+%% Figure 4. Formation and preservation of elevated low-relief surfaces.
 
 %%%%%%%%%%%%%%%%% Part 1: plot local relief distribution %%%%%%%%%%%%%%%%%%
 Models_to_plot = [1, 3];
@@ -187,10 +187,10 @@ hypsometry('file',fnr,'relief','radius',range_local,'dlim',[0 1500],'nofig','noc
 cd(['../',path_to_codes])
 
 % Save figure
-print([path_to_figures,'Figure3_Part1_reliefDistributions'],'-dsvg','-vector')
+print([path_to_figures,'Figure4_Part1_reliefDistributions'],'-dsvg','-vector')
 
 
-%%%%% Part 2: plot hypsometry and LRS distribution with elevation %%%%%%%%%
+%%%%% Part 2: plot hypsometry and ELRS distribution with elevation %%%%%%%%%
 % get erosion with elevation
 minele = -1000;
 maxele = 2000;
@@ -244,7 +244,7 @@ for m=1:length(Models_to_plot)
       LRS_area_range = [0, LRS_area_per_elevation_bin(i,Models_to_plot(m)), LRS_area_per_elevation_bin(i,Models_to_plot(m)), 0] ./120.*100;
       hf = patch(ax, LRS_area_range, elevation_range, [0,230,0]./255, 'EdgeColor', [0.3,0.3,0.3], 'LineWidth', 0.5, 'FaceAlpha', 0.4);
     end 
-    disp(['Total LRS area = ',num2str(sum(LRS_area_per_elevation_bin(:,Models_to_plot(m)))),' km²'])
+    disp(['Total ELRS area = ',num2str(sum(LRS_area_per_elevation_bin(:,Models_to_plot(m)))),' km²'])
 
     %%% Get Mean ELA %%%
     cd ([path_to_models,Models{Models_to_plot(m)}])
@@ -278,23 +278,23 @@ for m=1:length(Models_to_plot)
 end
 
 % Save figure
-print([path_to_figure, 'Figure3_Part2_Hyspometry_LRS_vs_elevation'],'-dsvg','-vector')
+print([path_to_figure, 'Figure4_Part2_Hyspometry_LRS_vs_elevation'],'-dsvg','-vector')
 
 
-%%%%%%%%%%% Part 3: Show topographies with LRS and cirques %%%%%%%%%%%%%%%%
+%%%%%%%%%%% Part 3: Show topographies with ELRS %%%%%%%%%%%%%%%%
 fnr = 149;
 figure 
 set(gcf,'units','normalized','outerposition',[0 0 1 1])
 t = tiledlayout(2,1);
 nexttile
 cd([path_to_models, Models{Models_to_plot(1)}])
-show('file',fnr,'data','bed','tlim',[-800 1700], 'mask',0.01,'cirques','cirques','withLRS','cmap','vik','noforeland','view',[90 90],'noclose','nofig','nocbar','radius',1000)
+show('file',fnr,'data','bed','tlim',[-800 1700], 'mask2',0.177,'noforeland','view',[90 90],'noclose','nofig','nocbar','radius',1000)
 set(gca,'Visible','off')
 cd(['../',path_to_codes])
 
 nexttile
 cd([path_to_models, Models{Models_to_plot(2)}])
-show('file',fnr,'data','bed','tlim',[-800 1700], 'mask',0.01,'cirques','cirques','withLRS','cmap','vik','noforeland','view',[90 90],'noclose','nofig','nocbar','radius',1000)
+show('file',fnr,'data','bed','tlim',[-800 1700], 'mask2', 0.177,'noforeland','view',[90 90],'noclose','nofig','nocbar','radius',1000)
 set(gca,'Visible','off')
 cd(['../',path_to_codes])
 
@@ -310,7 +310,7 @@ show('file',1:149,'data','bed','dlim',[0 100],'mask',0.001,'sliding','sliding','
 set(gca,'Visible','off')
 % Glacial erosion
 nexttile
-show('file',149,'data','abrasion_rate','rate',0,'dlim',[0 100],'dlim',[0 0.1],'noforeland','zoom',[1,15,50,23,65,-1,2],'view',[90 90],'nofig','nocbar','noclose','cmap','lapaz');%
+show('file',149,'data','abrasion_rate','rate',0,'dlim',[0 100],'dlim',[0 0.1],'noforeland','zoom',[1,15,50,23,65,-1,2],'view',[90 90],'nofig','nocbar','noclose','cmap','acton');%
 set(gca,'Visible','off')
 % Fluvial + hillslope erosion
 nexttile
@@ -330,7 +330,7 @@ show('file',1:149,'data','bed','dlim',[0 100],'mask',0.001,'sliding','sliding','
 set(gca,'Visible','off')
 % Glacial erosion
 nexttile
-show('file',149,'data','abrasion_rate','rate',0,'dlim',[0 100],'dlim',[0 0.1],'noforeland','zoom',[1,15,50,23,65,-1,2],'view',[90 90],'nofig','nocbar','noclose','cmap','lapaz');%
+show('file',149,'data','abrasion_rate','rate',0,'dlim',[0 100],'dlim',[0 0.1],'noforeland','zoom',[1,15,50,23,65,-1,2],'view',[90 90],'nofig','nocbar','noclose','cmap','acton');%
 set(gca,'Visible','off')
 % Fluvial + hillslope erosion
 nexttile

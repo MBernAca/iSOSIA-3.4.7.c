@@ -15,11 +15,18 @@ Models = {'Temp_-2C','Reference','Temp_+2C','Ampx2','41_kyr_cycles','100_kyr_cyc
     'Temp_-1C','Prec_x09','Prec_x1-25'};
 
 number_of_Models = length(Models);
-Colors_Models = {'c';[0,0,0];'b';'r';[0,255,0]./255;[0,153,0]./255;
-    [255,153,153]./255;[1,0.5,1];[255,0,255]./255};
+Colors_Models = {[0.5,0.92,1]; [0,0,0]; [51,51,255]./255; [0,153,76]./255; [0,255,0]./255; [0,204,0]./255;
+    [153,255,153]./255; [255,204,255]./255; [178,102,255]./255; [255,178,102]./255; [255,153,51]./255; [255,128,0]./255;
+    [204,102,0]./255; [153,76,0]./255; [1,0,0]; [51,153,255]./255;...
+    [153,204,255]./255; [255,102,255]./255; [255,153,255]./255};
+
 Legend_Models = {'Colder (-2°C)';'Reference';'Warmer (+2°C)';'Amp. x2';'41 kyrs';'100 kyrs';'No cycles';'Prx1.5';...
-    'Prx0.75';'K_Gx50';'K_Gx8';'K_Fx0.5';'K_Fx0.08';'l = 2';'No ice';...
+    'Prx0.75';'K_Gx50';'K_Gx8';'K_F0.1';'K_Fx0.6';'l = 2';'No ice';...
     '+1°C';'-1°C';'Pr x0.9';'Pr x1.25'};
+time1 = [1:85].*0.0205;
+time2 = [89:149].*0.02;
+Model_time1 = [time1,time2];
+Model_time2 = [1:149].*0.02;
 
 
 %% Initiate arrays
@@ -34,10 +41,17 @@ Mean_Erate_interglacial = zeros(number_of_Models,1);
 Total_cirque_area = zeros(number_of_Models,1);
 Erosion_vs_elevation = zeros(number_of_Models,31);
 local_reliefs = zeros(number_of_Models,1);
+local_reliefs_1km = zeros(number_of_Models,1);
 large_reliefs = zeros(number_of_Models,1);
 large_reliefs_init = zeros(number_of_Models,1);
 local_reliefs_init = zeros(number_of_Models,1);
+local_reliefs_init_1km = zeros(number_of_Models,1);
 erosion_reliefs = zeros(number_of_Models,1);
+Temperature_time = zeros(29900,number_of_Models);
+ice_volume_time = zeros(29900,number_of_Models);
+Mean_erosion_time = zeros(29900,number_of_Models);
+Mean_water_discharge_time = zeros(146,number_of_Models);
+LRS_time1 = zeros(146,length(Models_part1));
 
 % Load result models part 1
 load([path_to_save_analyses, 'Models_results_part1.mat'])
@@ -51,6 +65,13 @@ LRS_area_final(1:length(Models_part1)) = Total_LRS_area;
 LRS_area_stage1(1:length(Models_part1)) = sum(LRS_area_distribution_stage1,2)';
 Mean_ice_volume_stage1(1:length(Models_part1)) = Ice_vol_mean_stage1;
 Mean_ice_volume_stage2(1:length(Models_part1)) = Ice_vol_mean_stage2;
+for m=1:length(Models_part1)
+    Temperature_time(:,m) = Temperature_evolution(:,m);
+    ice_volume_time(:,m) = ice_volume_evolution(:,m);
+    Mean_erosion_time(:,m) = Mean_erosion_rate_evolution(:,m);
+    LRS_time1(:,m) = LRS_area_evolution(:,m);
+%     Mean_water_discharge_time(:,m) = Mean_water_discharge_evolution(:,m);
+end
 T0_Initial(1:length(Models_part1)) = Temperature_evolution(1,:);
 delta_Temp_glacialInterglacial(1:length(Models_part1)) = delta_max_Temp_array(:);
 Total_cirque_area(1:length(Models_part1)) = cirques_density_time(end,:);
@@ -58,8 +79,10 @@ Erosion_vs_elevation(1:length(Models_part1),:) = Erosion_dist';
 Mean_T0_interglacial(1:length(Models_part1))  = Mean_Temp_interglacials;
 Mean_Erate_interglacial(1:length(Models_part1))  = Mean_Erate_interglacials;
 local_reliefs(1:length(Models_part1)) = mean_local_relief;
+local_reliefs_1km(1:length(Models_part1)) = median_local_relief_1km;
 large_reliefs(1:length(Models_part1)) = mean_large_relief;
 local_reliefs_init(1:length(Models_part1)) = mean_local_relief_init;
+local_reliefs_init_1km(1:length(Models_part1)) = median_local_relief_init_1km;
 large_reliefs_init(1:length(Models_part1)) = mean_large_relief_init;
 erosion_reliefs(1:length(Models_part1)) = mean_erosion;
 
@@ -70,6 +93,7 @@ load([path_to_save_analyses, 'LRS_area_evolution_part2.mat'])
 load([path_to_save_analyses, 'Glacial_interglacials_part2.mat'])
 load([path_to_save_analyses, 'Erosion_vs_elevation_part2.mat'])
 load([path_to_save_analyses, 'Relief_scales_part2.mat'])
+LRS_time2 = zeros(149,length(Models_part1));
 
 indices = length(Models_part1) + 1 : length(Models_part1) + length(Models_part2)';
 LRS_area_final(indices) = Total_LRS_area;
@@ -83,10 +107,20 @@ Erosion_vs_elevation(indices,:) = Erosion_dist';
 Mean_T0_interglacial(indices)  = Mean_Temp_interglacials;
 Mean_Erate_interglacial(indices)  = Mean_Erate_interglacials;
 local_reliefs(indices) = mean_local_relief;
+local_reliefs_1km(indices) = median_local_relief_1km;
 large_reliefs(indices) = mean_large_relief;
 local_reliefs_init(indices) = mean_local_relief_init;
+local_reliefs_init_1km(indices) = median_local_relief_init_1km;
 large_reliefs_init(indices) = mean_large_relief_init;
 erosion_reliefs(indices) = mean_erosion;
+for m=1:length(Models_part2)
+    Temperature_time(:,m+length(Models_part1)) = Temperature_evolution(:,m);
+    ice_volume_time(:,m+length(Models_part1)) = ice_volume_evolution(:,m);
+    Mean_erosion_time(:,m+length(Models_part1)) = Mean_erosion_rate_evolution(:,m);
+    LRS_time2(:,m) = LRS_area_evolution(:,m);
+%     Mean_water_discharge_time(:,m) = Mean_water_discharge_evolution(:,m);
+end
+
 
 
 %%
@@ -94,7 +128,7 @@ erosion_reliefs(indices) = mean_erosion;
 %-------------------------- Section 3.2.1 ---------------------------------
 %--------------------------------------------------------------------------
 
-% Figure 4. Climatic control on the extent of LRS after 3 Myr of
+% Figure 5. Climatic control on the extent of ELRS after 3 Myr of
 % glaciations
 
 Models_to_plot = [1,2,3,16,17];
@@ -104,7 +138,7 @@ MarkerSize = 100;
 
 figure
 set(gcf,'units','normalized','outerposition',[0 0 1 1])
-% LRS vs T0
+% ELRS vs T0
 ax1 = subplot(2,2,1);
 hold on, box on, grid on;
 scatter(T0_init,LRS_area_final(Models_to_plot),MarkerSize,Mean_ice_volume_stage2(Models_to_plot),'fill'), cb= colorbar(); colormap(flipud(cool));
@@ -116,7 +150,7 @@ xlabel('T_0 (°C)'), ylabel('LRS area (km²)')
 set(gca,'fontname','arial','fontsize',size_font)
 ylim([0 1600]), xlim([7, 12])
 
-% LRS vs Prec
+% ELRS vs Prec
 Models_to_plot = [2, 8, 9, 18, 19];
 Prec_rate = [1.0, 1.5, 0.75, 0.9, 1.25];
 ax2 = subplot(2,2,2);
@@ -131,7 +165,7 @@ set(gca,'fontname','arial','fontsize',size_font)
 ylim([0 1600]), xlim([0.7, 1.6])
 
 
-% LRS vs climate variability
+% ELRS vs climate variability
 Models_to_plot = [7, 5, 2, 6, 4];
 ax3 = subplot(2,2,3);
 hold on, box on, grid on;
@@ -144,7 +178,7 @@ xlabel('Climate variability'), ylabel('LRS area (km²)')
 ylim([0 1600]), xlim([0, 6])
 set(gca,'fontname','arial','fontsize',size_font,'XTick',1:5,'XTickLabel',Legend_Models(Models_to_plot))
 
-% LRS vs mean ice volume
+% ELRS vs mean ice volume
 Models_to_plot = [1:9,16:19];
 ax4 = subplot(2,2,4);
 colormap(ax4,'parula')
@@ -158,7 +192,7 @@ ylim([0 1600]), xlim([0, 15])
 set(gca,'fontname','arial','fontsize',size_font)
 
 % save figure
-print([path_to_figures,'Figure4_mainText'],'-dsvg','-vector')
+print([path_to_figures,'Figure5_mainText'],'-dsvg','-vector')
 
 
 
@@ -167,7 +201,7 @@ print([path_to_figures,'Figure4_mainText'],'-dsvg','-vector')
 %---------------------------- Section 4.2 ---------------------------------
 %--------------------------------------------------------------------------
 
-% Figure 7. Low-relief surfaces and the occurence of the glacial shelter
+% Figure 9. elevated low-relief surfaces and the occurence of the glacial shelter
 
 Models_to_plot = [1:19];
 minele = 0;
@@ -193,7 +227,7 @@ axis square
 xlabel('Erosion (m)'),ylabel('Normalized elevation')
 set(gca,'fontname','arial','fontsize',10)
 
-% LRS area vs Mean T0 during interglacial
+% ELRS area vs Mean T0 during interglacial
 subplot(2,2,2)
 hold on, box on, grid on
 scatter(Mean_T0_interglacial(Models_to_plot),LRS_area_final(Models_to_plot),100,Mean_Erate_interglacial(Models_to_plot),'fill')
@@ -206,7 +240,7 @@ xlabel('Mean base-level temperature during interglacials (°C)'), ylabel('LRS ar
 axis square
 set(gca,'fontname','arial','fontsize',14)
 
-% LRS area vs cirques area
+% ELRS area vs valley-head cirques density
 subplot(2,2,3)
 hold on,box on, grid on
 scatter(Total_cirque_area(Models_to_plot),LRS_area_final(Models_to_plot),100,Mean_ice_volume_stage2(Models_to_plot),'fill'), cb = colorbar;
@@ -233,8 +267,43 @@ hold off
 xlim([-30 30]), ylim([0 60])
 
 % save figure
-print([path_to_figures,'Figure7_mainText'],'-dsvg','-vector')
+print([path_to_figures,'Figure9_mainText'],'-dsvg','-vector')
 
 
+%% Local relief for erosion efficacy variation models
+Models_to_plot = [2,10,11];
+kg = [1e-5, 5e-4, 8e-5];
+figure
+set(gcf,'units','normalized','outerposition',[0 0 1 1])
+% vary kG
+subplot(1,2,1)
+hold on, grid on, box on,
+cmap = colormap('cool');
+scatter(kg, local_reliefs_1km(Models_to_plot),150,LRS_area_final(Models_to_plot),'fill'), cb = colorbar();
+plot([0 0],[0 60],'--','Color',[0.3 0.3 0.3],'LineWidth',1.5)
+xlabel("kg"), ylabel('Median 1 km relief (m)')
+axis square
+ylabel(cb,'LRS area (km2)')
+set(gca,'fontname','arial','fontsize',14)
+hold off
+xlim([0 6e-4]),ylim([200 600])
+caxis([0 800])
 
+% vary Kf
+Models_to_plot = [2,12,13];
+kf = [1.1, 0.1, 0.6];
+subplot(1,2,2)
+cmap = colormap('cool');
+hold on, grid on, box on,
+scatter(kf, local_reliefs_1km(Models_to_plot),150,LRS_area_final(Models_to_plot),'s','fill'), cb = colorbar();
+plot([0 0],[0 60],'--','Color',[0.3 0.3 0.3],'LineWidth',1.5)
+xlabel("kF (m0.5)"), ylabel('Median 1 km relief (m)')
+axis square
+ylabel(cb,'LRS area (km2)')
+set(gca,'fontname','arial','fontsize',14)
+hold off
+xlim([0 1.5]),ylim([200 600])
+caxis([0 800])
+
+print('./Figure3a_Local_relief_vs_erosion_efficacy','-dsvg','-vector')
 
